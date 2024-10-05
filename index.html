@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="console-style.css">
+    <title>Console Style</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+        }
+
+        .fullscreen-window {
+            z-index: 1000; /* Un niveau de z-index supérieur pour être au-dessus des autres éléments */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw; /* Utilise 100% de la largeur de la fenêtre */
+            height: 100vh; /* Utilise 100% de la hauteur de la fenêtre */
+            background-color: rgba(0, 0, 0, 0.8); /* Fond sombre */
+        }
+
+        .window-title-bar {
+            background-color: #3b3b3b00; /* Couleur de la barre de titre */
+            padding: 10px; /* Espacement */
+            display: flex; /* Pour aligner les éléments horizontalement */
+            justify-content: space-between; /* Pour espacer les éléments */
+            align-items: center; /* Centrer verticalement */
+        }
+
+        .app-frame {
+            width: 100%; /* Remplir toute la largeur */
+            height: calc(100% - 40px); /* Ajuster pour la hauteur de la barre de titre */
+            border: none; /* Pas de bordure pour l'iframe */
+        }
+
+        .window-button {
+            width: 20px;
+            height: 20px;
+            background-color: rgba(117, 45, 45, 0.466); /* Couleur du bouton de fermeture */
+            cursor: pointer; /* Indicateur de survol */
+        }
+
+        .menu-dropdown {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            transform: translateX(-100%); /* Cacher par défaut */
+            transition: transform 0.3s ease;
+            z-index: 1001; /* Au-dessus de la fenêtre */
+        }
+
+        .menu-dropdown.active {
+            transform: translateX(0); /* Afficher le menu */
+        }
+
+        .menu-dropdown ul {
+            list-style: none;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .menu-dropdown li {
+            padding: 10px 0;
+            cursor: pointer;
+        }
+
+        .menu-icon {
+            cursor: pointer;
+        }
+
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #222;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="console-interface">
+        <header class="header">
+            <h1>Projet Reality</h1>
+        </header>
+        <nav class="main-menu">
+            <div class="menu-icon" data-background="https://www.fond-ecran-hd.net/Public/uploads/2019-01-14/1352.jpg" onclick="openApp('Store.html', 'PlayStation Store', this)">
+                <img src="https://media.discordapp.net/attachments/1279520156363522048/1292177529444241470/image.png?ex=6702c99a&is=6701781a&hm=ffb5595343e458fc0820c5d3c991871cb8d6457446dc7ea1ed8d164196465d10&=&format=webp&quality=lossless&width=559&height=559" alt="Reality Store" width="100" height="100">
+                <span class="app-name">Reality Store</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/Krunker.jfif" onclick="openApp('KrungerIO.html', 'Krunger.IO', this)">
+                <img src="Cover/krunkerio.png" alt="Shadow of the Colossus" width="100" height="100">
+                <span class="app-name">Krunger.IO</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/GhostOfTsushima.jfif" onclick="openApp('My First Project/index.html', 'Ghost of Tsushima', this)">
+                <img src="Cover/GhostOfTsushima.jpg" alt="Ghost of Tsushima" width="100" height="100">
+                <span class="app-name">Ghost of Tsushima</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/ChronoCross.jpg" onclick="openApp('chrono.html', 'Chrono Cross', this)">
+                <img src="Cover/ChronoCross.jpg" alt="Chrono Cross" width="100" height="100">
+                <span class="app-name">Chrono Cross</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/ResidentEvil.png" onclick="openApp('resident.html', 'Resident Evil 2', this)">
+                <img src="Cover/ResidentEvil.webp" alt="Resident Evil 2" width="100" height="100">
+                <span class="app-name">Resident Evil 2</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/RaymanLegends.jpg" onclick="openApp('rayman.html', 'Rayman Legends', this)">
+                <img src="Cover/RaymanLegends.avif" alt="Rayman Legends" width="100" height="100">
+                <span class="app-name">Rayman Legends</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/CallOfDuty.jpg" onclick="openApp('cod.html', 'Call of Duty', this)">
+                <img src="Cover/CallOfDuty.png" alt="Call of Duty" width="100" height="100">
+                <span class="app-name">Call of Duty</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/LittleBigPlanet.png" onclick="openApp('little.html', 'Little Big Planet', this)">
+                <img src="Cover/LittleBigPlanet.png" alt="Little Big Planet" width="100" height="100">
+                <span class="app-name">Little Big Planet</span>
+            </div>
+        </nav>
+        </div>
+    </div>
+
+    <script>
+        let zIndex = 1; // Pour gérer le niveau de z-index des fenêtres
+        let menuEnabled = true; // Variable pour gérer l'activation du menu
+
+        // Fonction pour ouvrir une application en plein écran
+        function openApp(url, appName) {
+            if (!menuEnabled) return; // Ne rien faire si le menu est désactivé
+
+            const appWindow = document.createElement('div');
+            appWindow.className = 'fullscreen-window';
+            appWindow.style.zIndex = zIndex++;
+            appWindow.innerHTML = `
+                <div class="window-title-bar">
+                    <span class="window-title">${appName}</span>
+                    <div class="window-buttons">
+                        <div class="window-button close-button" onclick="closeApp(this.parentNode.parentNode.parentNode)">X</div>
+                    </div>
+                </div>
+                <iframe src="${url}" class="app-frame"></iframe>
+                <div class="menu-dropdown" id="dropdownMenu">
+                    <ul>
+                        <li onclick="closeApp(this.parentNode.parentNode.parentNode)">Fermer le Jeu</li>
+                    </ul>
+                </div>
+            `;
+
+            // Ajoutez l'application à la page
+            document.body.appendChild(appWindow);
+            menuEnabled = false; // Désactiver le menu
+
+            // Passer en mode plein écran
+            if (appWindow.requestFullscreen) {
+                appWindow.requestFullscreen();
+            }
+
+            // Fonctionnalité de fermeture par appui long sur le stick droit
+            setupLongPressClose(appWindow);
+        }
+
+        // Fonction pour fermer l'application
+        function closeApp(appWindow) {
+            document.body.removeChild(appWindow);
+            menuEnabled = true; // Réactiver le menu à la fermeture
+        }
+
+        // Fonction pour gérer le long appui sur le stick droit
+        function setupLongPressClose(appWindow) {
+            let pressTimer;
+
+            const dropdownMenu = appWindow.querySelector('#dropdownMenu');
+
+            // Écouteurs d'événements pour la manette
+            window.addEventListener('gamepadconnected', function() {
+                console.log("Manette connectée");
+            });
+
+            // Vérifie l'état du stick droit
+            function checkRightStick() {
+                const gamepads = navigator.getGamepads();
+                if (gamepads[0]) {
+                    const axes = gamepads[0].axes;
+                    if (axes[2] > 0.5) { // Vérifie si le stick droit est maintenu
+                        if (!pressTimer) {
+                            pressTimer = setTimeout(() => {
+                                dropdownMenu.classList.add('active'); // Affiche le menu
+                                appWindow.style.zIndex = zIndex++; // Mettre l'application au-dessus
+                            }, 5000); // 5 secondes
+                        }
+                    } else {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                        dropdownMenu.classList.remove('active'); // Masque le menu
+                    }
+                }
+                requestAnimationFrame(checkRightStick); // Répète la vérification
+            }
+
+            checkRightStick(); // Démarrer la vérification
+        }
+
+        // Initialiser les icônes du menu
+        const menuIcons = document.querySelectorAll('.menu-icon');
+        let currentIndex = 0;
+        let isMoving = false;
+
+        // Fonction pour changer l'arrière-plan basé sur l'index actuel
+        function changeBackground(index) {
+            const background = menuIcons[index].getAttribute('data-background');
+            document.body.style.backgroundImage = `url(${background})`;
+            document.body.style.backgroundSize = 'cover'; // Couvrir l'ensemble du fond
+            document.body.style.backgroundPosition = 'center'; // Centrer le fond
+        }
+
+        // Mettre à jour la sélection des icônes
+        function updateSelection() {
+            menuIcons.forEach((icon) => icon.classList.remove('selected'));
+            const selectedIcon = menuIcons[currentIndex];
+            selectedIcon.classList.add('selected');
+            menuIcons.forEach((icon, index) => {
+                icon.style.transform = index !== currentIndex ? "scale(0.9)" : "scale(1.15)";
+            });
+        }
+
+        // Fonction pour gérer le survol des icônes avec la manette
+        function hoverWithGamepad() {
+            const gamepads = navigator.getGamepads();
+            if (gamepads[0]) {
+                const axes = gamepads[0].axes;
+                const buttons = gamepads[0].buttons;
+
+                if (axes[0] > 0.5 && currentIndex < menuIcons.length - 1 && !isMoving) {
+                    currentIndex++;
+                    changeBackground(currentIndex);
+                    updateSelection();
+                    isMoving = true;
+                } else if (axes[0] < -0.5 && currentIndex > 0 && !isMoving) {
+                    currentIndex--;
+                    changeBackground(currentIndex);
+                    updateSelection();
+                    isMoving = true;
+                } else if (Math.abs(axes[0]) < 0.2) {
+                    isMoving = false;
+                }
+
+                if (buttons[0].pressed) {
+                    const url = menuIcons[currentIndex].getAttribute('onclick').match(/'([^']+)'/)[1];
+                    const title = menuIcons[currentIndex].querySelector('span').textContent;
+                    openApp(url, title);
+                }
+            }
+        }
+
+        // Mise à jour de l'affichage chaque 50 millisecondes
+        setInterval(hoverWithGamepad, 50);
+
+        // Écouteurs d'événements pour la souris
+        menuIcons.forEach((icon, index) => {
+            icon.addEventListener('mouseenter', () => {
+                currentIndex = index;
+                changeBackground(currentIndex);
+                updateSelection();
+            });
+            icon.addEventListener('mouseleave', () => {
+                document.body.style.background = '';
+            });
+        });
+
+        // Initialiser la sélection pour la première icône
+        updateSelection();
+    </script>
+</body>
+</html>

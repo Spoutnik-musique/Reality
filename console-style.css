@@ -1,0 +1,148 @@
+/* Style général du corps */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    color: rgb(255, 255, 255); /* Couleur du texte */
+    background: url('https://www.fond-ecran-hd.net/Public/uploads/2019-01-14/1352.jpg') no-repeat center center fixed; /* Image de fond */
+    background-size: cover; /* Couvrir tout l'arrière-plan */
+    position: relative; /* Nécessaire pour le pseudo-élément */
+    max-width: 1920px; /* Limiter la largeur maximale à 1920px */
+    max-height: 1080px; /* Limiter la hauteur maximale à 1080px */
+    overflow: hidden; /* Cacher tout débordement */
+    height: 100vh; /* Utiliser la hauteur de la fenêtre */
+}
+
+
+/* Masque noir transparent */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Masque noir transparent */
+    z-index: 1; /* Au-dessus de l'image de fond */
+}
+
+/* Interface de la console */
+.console-interface {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrer le contenu */
+    padding: 20px;
+    border-radius: 0; /* Pas de coins arrondis pour la console */
+    height: 100vh; /* Hauteur de l'interface */
+    justify-content: space-between; /* Espacement entre les sections */
+    position: relative; /* Pour permettre l'affichage au-dessus du masque */
+    z-index: 2; /* Au-dessus du masque */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7); /* Ombre portée sur l'interface */
+}
+
+.fullscreen-window {
+    z-index: 1000; /* Un niveau de z-index supérieur pour être au-dessus des autres éléments */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* Utilise 100% de la largeur de la fenêtre */
+    height: 100vh; /* Utilise 100% de la hauteur de la fenêtre */
+    background-color: rgba(0, 0, 0, 0.8); /* Fond sombre */
+}
+
+.window-title-bar {
+    background-color: #00000000; /* Couleur de la barre de titre */
+    padding: 10px; /* Espacement */
+    display: flex; /* Pour aligner les éléments horizontalement */
+    justify-content: space-between; /* Pour espacer les éléments */
+    align-items: center; /* Centrer verticalement */
+}
+
+.app-frame {
+    width: 100%; /* Remplir toute la largeur */
+    height: calc(100% - 40px); /* Ajuster pour la hauteur de la barre de titre */
+    border: none; /* Pas de bordure pour l'iframe */
+}
+
+.window-button {
+    width: 20px;
+    height: 20px;
+    background-color: red; /* Couleur du bouton de fermeture */
+    cursor: pointer; /* Indicateur de survol */
+}
+/* En-tête */
+.header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    border-bottom: 2px solid #ffffff27; /* Couleur PlayStation */
+}
+
+/* Menu principal */
+.main-menu {
+    display: flex;
+    justify-content: space-around; /* Espace entre les éléments */
+    padding-top: 55px; /* Augmenter le padding supérieur de 5px à 55px */
+    padding-bottom: 150px; /* Espacement inférieur pour donner de l'espace en bas */
+    width: 100%; /* Largeur du menu */
+    overflow-x: auto; /* Défilement horizontal */
+}
+
+.menu-icon {
+    display: flex;
+    flex-direction: column; /* Aligner les éléments verticalement */
+    align-items: center; /* Centrer horizontalement les éléments */
+    cursor: pointer; /* Curseur pointer pour les éléments interactifs */
+    transition: transform 0.2s, margin 0.2s; /* Ajout de la transition pour la marge */
+    width: 225px; /* Largeur des icônes */
+    height: 225px; /* Hauteur des icônes */
+}
+
+.menu-icon img {
+    width: 100%; /* Remplir entièrement l'icône */
+    height: 100%; /* Remplir entièrement l'icône */
+    object-fit: cover; /* Pour garder le rapport d'aspect */
+    border-radius: 0; /* Pas de coins arrondis pour les icônes */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Ombre portée */
+}
+
+/* Style pour le nom de l'application */
+.app-name {
+    margin-top: 10px; /* Espace au-dessus du nom de l'application */
+    color: white; /* Couleur du texte */
+    font-weight: bold; /* Éventuellement gras */
+    text-align: center; /* Centrer le texte */
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8); /* Ombre pour lisibilité */
+}
+
+
+/* Barre d'état */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    border-top: 2px solid #ffffff; /* Couleur PlayStation */
+    position: absolute; /* Positionner la barre d'état en bas */
+    border-bottom: 2px solid #ffffff27; /* Couleur PlayStation */
+}
+
+/* Informations utilisateur */
+.user-info {
+    display: flex;
+    align-items: center; /* Centrer les éléments */
+}
+
+.user-name {
+    margin-left: 10px; /* Espace à gauche du nom d'utilisateur */
+}
+
+/* Styles de la barre de statut */
+.status-left, .status-center {
+    display: flex;
+    align-items: center; /* Centrer les éléments */
+}
+
+.status-left span, .status-center span {
+    margin-right: 15px; /* Espace entre les éléments */
+}
