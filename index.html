@@ -24,16 +24,69 @@
         }
 
         .window-title-bar {
-            background-color: #3b3b3b00; /* Couleur de la barre de titre */
-            padding: 10px; /* Espacement */
-            display: flex; /* Pour aligner les éléments horizontalement */
-            justify-content: space-between; /* Pour espacer les éléments */
-            align-items: center; /* Centrer verticalement */
-        }
+            position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 40%, rgba(0, 0, 0, 0.3) 80%, transparent);
+    display: none;
+    z-index: 2000;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.exit-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.95) 30%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.3) 85%, transparent);
+    z-index: 3000;
+    transition: opacity 0.3s ease;
+}
+
+
+.exit-content {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+}
+
+.exit-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.app-label {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.7;
+}
+
+.quit-app-button {
+    background: none;
+    border: 2px solid white;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quit-app-button:hover {
+    background-color: white;
+    color: black;
+}
 
         .app-frame {
             width: 100%; /* Remplir toute la largeur */
-            height: calc(100% - 40px); /* Ajuster pour la hauteur de la barre de titre */
+            height: calc(100%); /* Ajuster pour la hauteur de la barre de titre */
             border: none; /* Pas de bordure pour l'iframe */
         }
 
@@ -87,6 +140,52 @@
             justify-content: space-between;
             align-items: center;
         }
+        /* Section pour la description et le bouton */
+/* Section pour la description et le bouton */
+.description-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+.hidden {
+    display: none !important;
+}
+
+.title-left h1 {
+    font-size: 8rem; /* Taille du titre */
+    font-weight: bold;
+    margin: 0;
+}
+
+.description-right {
+    text-align: right;
+    max-width: 500px; /* Limite la largeur de la description */
+}
+
+.description-right p {
+    font-size: 1.2rem; /* Taille du texte */
+    margin: 0;
+}
+
+.launch-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.launch-button:hover {
+    background-color: #0056b3;
+}
+
     </style>
 </head>
 <body>
@@ -94,125 +193,200 @@
         <header class="header">
             <h1>Projet Reality</h1>
         </header>
+    
+        <!-- Section ajoutée pour la description et le bouton -->
+        <!--<div class="description-section">
+            <div class="title-left">
+                <h1>PROJET REALITY</h1>
+            </div>
+            <div class="description-right">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet ipsum ultricies, varius purus a, dignissim dui. Nam nec enim a diam fringilla aliquet non in turpis. Ut quis leo nec nisi egestas euismod nec mattis nulla. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed accumsan vitae nulla non viverra. massa ac ex.</p>
+                <button class="launch-button">Lancer</button>
+            </div>
+        </div> -->
+    
         <nav class="main-menu">
+            <div class="menu-icon" data-background="Fond/Gartic.webp" onclick="openApp('KrungerIO.html', 'Gartic Phone', this)">
+                <img src="Cover/Gartic.webp" alt="Reality Store" width="100" height="100">
+                <span class="app-name">Garticphone</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/Gartic.webp" onclick="openApp('KrungerIO.html', 'Gartic Phone', this)">
+                <img src="Cover/Gartic.webp" alt="Reality Store" width="100" height="100">
+                <span class="app-name">Garticphone</span>
+            </div>
+            <div class="menu-icon" data-background="Fond/Gartic.webp" onclick="openApp('KrungerIO.html', 'Gartic Phone', this)">
+                <img src="Cover/Gartic.webp" alt="Reality Store" width="100" height="100">
+                <span class="app-name">Garticphone</span>
+            </div>
             <div class="menu-icon" data-background="Fond/Gartic.webp" onclick="openApp('KrungerIO.html', 'Gartic Phone', this)">
                 <img src="Cover/Gartic.webp" alt="Reality Store" width="100" height="100">
                 <span class="app-name">Garticphone</span>
             </div>
         </nav>
         </div>
+        
     </div>
 
     <script>
-        let zIndex = 1; // Pour gérer le niveau de z-index des fenêtres
-        let menuEnabled = true; // Variable pour gérer l'activation du menu
-
-        // Fonction pour ouvrir une application en plein écran
+        let zIndex = 1;
+        let menuEnabled = true;
+        let keyPressTimer = null;
+        let buttonPressTimer = null;
+        let overlayShown = false;
+    
         function openApp(url, appName) {
-            if (!menuEnabled) return; // Ne rien faire si le menu est désactivé
-
+            if (!menuEnabled) return;
+    
             const appWindow = document.createElement('div');
             appWindow.className = 'fullscreen-window';
             appWindow.style.zIndex = zIndex++;
+    
             appWindow.innerHTML = `
-                <div class="window-title-bar">
-                    <span class="window-title">${appName}</span>
-                    <div class="window-buttons">
-                        <div class="window-button close-button" onclick="closeApp(this.parentNode.parentNode.parentNode)">X</div>
+                <div class="exit-overlay hidden" id="exitOverlay">
+                    <div class="exit-content">
+                        <h2>Vous nous quittez ?</h2>
+                        <p class="app-label">Application en cours :</p>
+                        <button class="quit-app-button" onclick="confirmExit()">Quitter l’applis</button>
                     </div>
                 </div>
+    
                 <iframe src="${url}" class="app-frame"></iframe>
                 <div class="menu-dropdown" id="dropdownMenu">
                     <ul>
-                        <li onclick="closeApp(this.parentNode.parentNode.parentNode)">Fermer le Jeu</li>
+                        <li onclick="closeApp(this.closest('.fullscreen-window'))">Fermer le Jeu</li>
                     </ul>
                 </div>
             `;
-
-            // Ajoutez l'application à la page
+    
             document.body.appendChild(appWindow);
-            menuEnabled = false; // Désactiver le menu
-
-            // Passer en mode plein écran
+            menuEnabled = false;
+    
             if (appWindow.requestFullscreen) {
                 appWindow.requestFullscreen();
             }
-
-            // Fonctionnalité de fermeture par appui long sur le stick droit
+    
             setupLongPressClose(appWindow);
         }
-
-        // Fonction pour fermer l'application
+    
+        function confirmExit() {
+            const appWindow = document.querySelector('.fullscreen-window');
+            const exitOverlay = appWindow.querySelector('#exitOverlay');
+            exitOverlay.classList.remove('active');
+            closeApp(appWindow);
+        }
+    
         function closeApp(appWindow) {
             document.body.removeChild(appWindow);
-            menuEnabled = true; // Réactiver le menu à la fermeture
+            menuEnabled = true;
+            overlayShown = false;
         }
-
-        // Fonction pour gérer le long appui sur le stick droit
+    
+        function showExitOverlay() {
+            const appWindow = document.querySelector('.fullscreen-window');
+            if (!appWindow) return;
+    
+            const exitOverlay = appWindow.querySelector('#exitOverlay');
+    
+            if (!overlayShown) {
+                exitOverlay.classList.remove('hidden');
+                exitOverlay.classList.add('active');
+                overlayShown = true;
+            }
+        }
+    
         function setupLongPressClose(appWindow) {
             let pressTimer;
-
             const dropdownMenu = appWindow.querySelector('#dropdownMenu');
-
-            // Écouteurs d'événements pour la manette
-            window.addEventListener('gamepadconnected', function() {
+    
+            // Gamepad connected
+            window.addEventListener('gamepadconnected', () => {
                 console.log("Manette connectée");
             });
-
-            // Vérifie l'état du stick droit
+    
             function checkRightStick() {
                 const gamepads = navigator.getGamepads();
                 if (gamepads[0]) {
                     const axes = gamepads[0].axes;
-                    if (axes[2] > 0.5) { // Vérifie si le stick droit est maintenu
+                    if (axes[2] > 0.5) {
                         if (!pressTimer) {
                             pressTimer = setTimeout(() => {
-                                dropdownMenu.classList.add('active'); // Affiche le menu
-                                appWindow.style.zIndex = zIndex++; // Mettre l'application au-dessus
-                            }, 5000); // 5 secondes
+                                dropdownMenu.classList.add('active');
+                                appWindow.style.zIndex = zIndex++;
+                            }, 5000);
                         }
                     } else {
                         clearTimeout(pressTimer);
                         pressTimer = null;
-                        dropdownMenu.classList.remove('active'); // Masque le menu
+                        dropdownMenu.classList.remove('active');
                     }
                 }
-                requestAnimationFrame(checkRightStick); // Répète la vérification
+                requestAnimationFrame(checkRightStick);
             }
-
-            checkRightStick(); // Démarrer la vérification
+            checkRightStick();
         }
-
-        // Initialiser les icônes du menu
+    
+        // Gestion clavier - touche ²
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "²" && !keyPressTimer) {
+                keyPressTimer = setTimeout(() => {
+                    console.log("Appui long touche ²");
+                    showExitOverlay();
+                }, 3000);
+            }
+        });
+    
+        window.addEventListener('keyup', (e) => {
+            if (e.key === "²") {
+                clearTimeout(keyPressTimer);
+                keyPressTimer = null;
+            }
+        });
+    
+        // Gestion bouton Option (Start) de la manette
+        function monitorGamepadOptionButton() {
+            const gamepads = navigator.getGamepads();
+            if (gamepads[0]) {
+                const optionButton = gamepads[0].buttons[9];
+                if (optionButton.pressed && !buttonPressTimer) {
+                    buttonPressTimer = setTimeout(() => {
+                        console.log("Appui long bouton Option");
+                        showExitOverlay();
+                    }, 3000);
+                } else if (!optionButton.pressed) {
+                    clearTimeout(buttonPressTimer);
+                    buttonPressTimer = null;
+                }
+            }
+            requestAnimationFrame(monitorGamepadOptionButton);
+        }
+    
+        monitorGamepadOptionButton();
+    
+        // Navigation menu avec manette
         const menuIcons = document.querySelectorAll('.menu-icon');
         let currentIndex = 0;
         let isMoving = false;
-
-        // Fonction pour changer l'arrière-plan basé sur l'index actuel
+    
         function changeBackground(index) {
             const background = menuIcons[index].getAttribute('data-background');
             document.body.style.backgroundImage = `url(${background})`;
-            document.body.style.backgroundSize = 'cover'; // Couvrir l'ensemble du fond
-            document.body.style.backgroundPosition = 'center'; // Centrer le fond
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
         }
-
-        // Mettre à jour la sélection des icônes
+    
         function updateSelection() {
-            menuIcons.forEach((icon) => icon.classList.remove('selected'));
-            const selectedIcon = menuIcons[currentIndex];
-            selectedIcon.classList.add('selected');
             menuIcons.forEach((icon, index) => {
-                icon.style.transform = index !== currentIndex ? "scale(0.9)" : "scale(1.15)";
+                icon.classList.toggle('selected', index === currentIndex);
+                icon.style.transform = index === currentIndex ? "scale(1.15)" : "scale(0.9)";
             });
         }
-
-        // Fonction pour gérer le survol des icônes avec la manette
+    
         function hoverWithGamepad() {
             const gamepads = navigator.getGamepads();
             if (gamepads[0]) {
                 const axes = gamepads[0].axes;
                 const buttons = gamepads[0].buttons;
-
+    
                 if (axes[0] > 0.5 && currentIndex < menuIcons.length - 1 && !isMoving) {
                     currentIndex++;
                     changeBackground(currentIndex);
@@ -226,19 +400,29 @@
                 } else if (Math.abs(axes[0]) < 0.2) {
                     isMoving = false;
                 }
-
+    
                 if (buttons[0].pressed) {
-                    const url = menuIcons[currentIndex].getAttribute('onclick').match(/'([^']+)'/)[1];
-                    const title = menuIcons[currentIndex].querySelector('span').textContent;
+                    const icon = menuIcons[currentIndex];
+                    const url = icon.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    const title = icon.querySelector('span').textContent;
                     openApp(url, title);
                 }
             }
         }
-
-        // Mise à jour de l'affichage chaque 50 millisecondes
+    
         setInterval(hoverWithGamepad, 50);
-
-        // Écouteurs d'événements pour la souris
+    
+        // Empêche fermeture d'app si sortie plein écran
+        document.addEventListener('fullscreenchange', () => {
+            const isFullscreen = document.fullscreenElement !== null;
+            const appWindow = document.querySelector('.fullscreen-window');
+            if (!isFullscreen && appWindow) {
+                appWindow.style.zIndex = zIndex++;
+                console.log("Sortie plein écran, app reste active");
+            }
+        });
+    
+        // Hover souris
         menuIcons.forEach((icon, index) => {
             icon.addEventListener('mouseenter', () => {
                 currentIndex = index;
@@ -249,9 +433,10 @@
                 document.body.style.background = '';
             });
         });
-
-        // Initialiser la sélection pour la première icône
+    
+        // Initialisation
         updateSelection();
     </script>
+    
 </body>
 </html>
